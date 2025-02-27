@@ -7,6 +7,35 @@ import SleepCard from "@/components/SleepCard";
 
 const Index = () => {
   const [isTracking, setIsTracking] = useState(false);
+  const [sleepTime, setSleepTime] = useState("23:00");
+  const [wakeTime, setWakeTime] = useState("07:00");
+  const [duration, setDuration] = useState("8小时");
+
+  const calculateDuration = (sleep: string, wake: string) => {
+    const [sleepHour, sleepMinute] = sleep.split(':').map(Number);
+    const [wakeHour, wakeMinute] = wake.split(':').map(Number);
+    
+    let hours = wakeHour - sleepHour;
+    let minutes = wakeMinute - sleepMinute;
+    
+    if (hours < 0) hours += 24;
+    if (minutes < 0) {
+      minutes += 60;
+      hours = (hours - 1 + 24) % 24;
+    }
+    
+    setDuration(`${hours}小时`);
+  };
+
+  const handleSleepTimeChange = (newValue: string) => {
+    setSleepTime(newValue);
+    calculateDuration(newValue, wakeTime);
+  };
+
+  const handleWakeTimeChange = (newValue: string) => {
+    setWakeTime(newValue);
+    calculateDuration(sleepTime, newValue);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sleep-gentle to-sleep-lavender">
@@ -21,9 +50,24 @@ const Index = () => {
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
-            <SleepCard title="就寝时间" value="23:00" icon="sleep" />
-            <SleepCard title="起床时间" value="07:00" icon="wake" />
-            <SleepCard title="睡眠时长" value="8小时" icon="duration" />
+            <SleepCard 
+              title="就寝时间" 
+              value={sleepTime} 
+              icon="sleep"
+              onValueChange={handleSleepTimeChange}
+            />
+            <SleepCard 
+              title="起床时间" 
+              value={wakeTime} 
+              icon="wake"
+              onValueChange={handleWakeTimeChange}
+            />
+            <SleepCard 
+              title="睡眠时长" 
+              value={duration} 
+              icon="duration"
+              onValueChange={setDuration}
+            />
           </div>
 
           <Card className="p-6 glass-morphism">
