@@ -20,8 +20,6 @@ interface SleepCardProps {
 }
 
 const SleepCard = ({ title, value, icon, onValueChange }: SleepCardProps) => {
-  const [hour, minute] = value.split(':').map(Number);
-
   const getIcon = () => {
     switch (icon) {
       case "sleep":
@@ -33,20 +31,8 @@ const SleepCard = ({ title, value, icon, onValueChange }: SleepCardProps) => {
     }
   };
 
-  const handleHourChange = (newHour: string) => {
-    if (icon === 'duration') {
-      onValueChange(`${newHour}小时`);
-      return;
-    }
-    onValueChange(`${newHour.padStart(2, '0')}:${String(minute).padStart(2, '0')}`);
-  };
-
-  const handleMinuteChange = (newMinute: string) => {
-    if (icon === 'duration') return;
-    onValueChange(`${String(hour).padStart(2, '0')}:${newMinute.padStart(2, '0')}`);
-  };
-
   if (icon === 'duration') {
+    const hours = parseFloat(value.split('小时')[0]);
     return (
       <Card className="p-6 card-hover">
         <div className="flex items-center gap-4">
@@ -56,27 +42,23 @@ const SleepCard = ({ title, value, icon, onValueChange }: SleepCardProps) => {
           <div className="flex-1">
             <p className="text-sm text-muted-foreground">{title}</p>
             <div className="flex items-center gap-3">
-              <Select value={value.split('小时')[0]} onValueChange={handleHourChange}>
-                <SelectTrigger className="w-24">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>小时</SelectLabel>
-                    {Array.from({length: 24}, (_, i) => (
-                      <SelectItem key={i + 1} value={String(i + 1)}>
-                        {i + 1} 小时
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              <p className="text-2xl font-semibold text-sleep-deep">{hours.toFixed(1)}小时</p>
             </div>
           </div>
         </div>
       </Card>
     );
   }
+
+  const [hours, minutes] = value.split(':').map(Number);
+
+  const handleHourChange = (newHour: string) => {
+    onValueChange(`${newHour.padStart(2, '0')}:${String(minutes).padStart(2, '0')}`);
+  };
+
+  const handleMinuteChange = (newMinute: string) => {
+    onValueChange(`${String(hours).padStart(2, '0')}:${newMinute.padStart(2, '0')}`);
+  };
 
   return (
     <Card className="p-6 card-hover">
@@ -87,7 +69,7 @@ const SleepCard = ({ title, value, icon, onValueChange }: SleepCardProps) => {
         <div className="flex-1">
           <p className="text-sm text-muted-foreground">{title}</p>
           <div className="flex items-center gap-2">
-            <Select value={String(hour)} onValueChange={handleHourChange}>
+            <Select value={String(hours)} onValueChange={handleHourChange}>
               <SelectTrigger className="w-[70px]">
                 <SelectValue />
               </SelectTrigger>
@@ -103,7 +85,7 @@ const SleepCard = ({ title, value, icon, onValueChange }: SleepCardProps) => {
               </SelectContent>
             </Select>
             <span className="text-sleep-deep">:</span>
-            <Select value={String(minute)} onValueChange={handleMinuteChange}>
+            <Select value={String(minutes)} onValueChange={handleMinuteChange}>
               <SelectTrigger className="w-[70px]">
                 <SelectValue />
               </SelectTrigger>

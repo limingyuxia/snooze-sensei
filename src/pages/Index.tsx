@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Moon, Sun, BedDouble } from "lucide-react";
 import { Card } from "@/components/ui/card";
@@ -10,7 +9,7 @@ const Index = () => {
   const [isTracking, setIsTracking] = useState(false);
   const [sleepTime, setSleepTime] = useState("23:00");
   const [wakeTime, setWakeTime] = useState("07:00");
-  const [duration, setDuration] = useState("8小时");
+  const [duration, setDuration] = useState("8.0小时");
   const [isSnoring, setIsSnoring] = useState(false);
   const [snoringCount, setSnoringCount] = useState(0);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -31,7 +30,8 @@ const Index = () => {
       hours = (hours - 1 + 24) % 24;
     }
     
-    setDuration(`${hours}小时`);
+    const totalHours = hours + (minutes / 60);
+    setDuration(`${totalHours.toFixed(1)}小时`);
   };
 
   const handleSleepTimeChange = (newValue: string) => {
@@ -98,10 +98,8 @@ const Index = () => {
       
       analyser.getByteFrequencyData(dataArray);
       
-      // 计算音频强度
       const average = dataArray.reduce((acc, value) => acc + value, 0) / dataArray.length;
       
-      // 设置阈值检测打呼噜
       const isCurrentlySnoring = average > 30;
       
       if (isCurrentlySnoring && !isSnoring) {
@@ -209,7 +207,7 @@ const Index = () => {
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-sleep-accent" />
-                  创造舒适的睡眠环境
+                  创���舒适的睡眠环境
                 </li>
               </ul>
             </Card>
